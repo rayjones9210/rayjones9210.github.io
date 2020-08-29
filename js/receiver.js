@@ -4,11 +4,7 @@ const context = cast.framework.CastReceiverContext.getInstance();
 var playerManager = context.getPlayerManager();
 var senderId;
 //
-const configuration = {
-	'iceServers': [{
-		'urls': 'stun:stun.l.google.com:19302' 
-	}]
-};
+const configuration = {};
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
@@ -23,14 +19,14 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		peerConnection.createAnswer().then(answer => {
 			peerConnection.setLocalDescription(answer);
 			//
-			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "ANSWER",
 				"answer": answer
 			});
 		}).catch(error => {
-			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "ERROR",
-				"message": error
+				"message": "Could not create answer " + error
 			});
 		});
 		//
@@ -39,7 +35,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		try {
 			audio.srcObject = remoteStream;
 			//
-			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "STARTED"
 			});
 		}
@@ -54,14 +50,14 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		//
 		remoteStream.getTracks().forEach(track => track.stop());
 		//
-		context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+		context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 			"type": "STOPPED"
 		});
 	} else if (messageCast.type === "ICE_CANDIDATE") {
 		try {
 			peerConnection.addIceCandidate(messageCast.iceCandidate);
 		} catch (e) {
-			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "ERROR",
 				"message": "Error adding received ice candidate" + e
 			});
@@ -119,7 +115,6 @@ function configPeerConnection() {
 	// Listen for connectionstatechange on the local RTCPeerConnection
 	peerConnection.addEventListener('connectionstatechange', event => {
 		if (peerConnection.connectionState === 'connected') {
-			// Peers connected!
 			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "STATUS",
 				"message": "Peer Connected"
