@@ -12,7 +12,7 @@ const configuration = {
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
-audio.srcObject = remoteStream;
+//audio.srcObject = remoteStream;
 //
 context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	var messageCast = customEvent.data;
@@ -67,7 +67,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		"senderId": customEvent.senderId,
 		"message": messageCast
 	});
-});/*
+});
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
 	return null;
@@ -98,7 +98,7 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 	});
 //
 playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
-//*/
+//
 context.start();
 //
 function configPeerConnection() {
