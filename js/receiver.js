@@ -12,7 +12,16 @@ const configuration = {
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
-//audio.srcObject = remoteStream;
+try {
+	audio.srcObject = remoteStream;
+}
+catch(e)
+{
+	context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+		"type": "ERROR",
+		"message": "Could not set audio source object " + e
+	});
+}
 //
 context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	var messageCast = customEvent.data;
