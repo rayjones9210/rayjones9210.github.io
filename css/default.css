@@ -12,7 +12,7 @@
 
 .progressBar {
 	background-color: rgb(232,72,130);
-}
+} font-size: 6em;
 
 /*.splash {
 	background-image: url(../images/splash.png);
@@ -22,3 +22,19 @@
 	background-image: url(../images/watermark.png);
 	background-size: 57px 57px;
 }*/
+body {
+  background: white;
+  color: black;
+}
+
+#container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#content {
+  font-family: 'Roboto', sans-serif;
+ 
