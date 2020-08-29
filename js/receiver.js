@@ -61,11 +61,11 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		}
 	}
 	//
-	context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+	/*context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
 		"type": "MESSAGE_RECEIVED",
 		"senderId": customEvent.senderId,
 		"message": messageCast
-	});
+	});*/
 });
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
