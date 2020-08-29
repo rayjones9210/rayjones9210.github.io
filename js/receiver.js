@@ -12,17 +12,6 @@ const configuration = {
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
-try {
-	audio.srcObject = remoteStream;
-}
-catch(e)
-{
-	context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
-		"type": "ERROR",
-		"message": "Could not set audio source object " + e
-	});
-}
-//
 context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	var messageCast = customEvent.data;
 		senderId = customEvent.senderId;
@@ -47,11 +36,20 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		//
 		configPeerConnection();
 	} else if (messageCast.type === "START") {
-		audio.srcObject = remoteStream;
-		//
-		context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
-			"type": "STARTED"
-		});
+		try {
+			audio.srcObject = remoteStream;
+			//
+			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+				"type": "STARTED"
+			});
+		}
+		catch(e)
+		{
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+				"type": "ERROR",
+				"message": "Could not set audio source object " + e
+			});
+		}
 	} else if (messageCast.type === "STOP") {
 		//
 		remoteStream.getTracks().forEach(track => track.stop());
@@ -97,8 +95,7 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 	seekData => {
 		// Block seeking if the SEEK supported media command is disabled
 		if (!(playerManager.getSupportedMediaCommands() & cast.framework.messages.Command.SEEK)) {
-			let e = new cast.framework.messages.ErrorData(cast.framework.messages.ErrorType
-				.INVALID_REQUEST);
+			let e = new cast.framework.messages.ErrorData(cast.framework.messages.ErrorType.INVALID_REQUEST);
 			e.reason = cast.framework.messages.ErrorReason.NOT_SUPPORTED;
 			return e;
 		}
