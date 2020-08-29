@@ -1,7 +1,7 @@
 var audio = document.querySelector("audio");
 const CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
 const context = cast.framework.CastReceiverContext.getInstance();
-/*var playerManager = context.getPlayerManager();
+var playerManager = context.getPlayerManager();
 var senderId;
 //
 const configuration = {
@@ -98,10 +98,10 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 	});
 //
 playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
-//*/
+//
 context.start();
 //
-/*function configPeerConnection() {
+function configPeerConnection() {
 	// Listen for local ICE candidates on the local RTCPeerConnection
 	peerConnection.addEventListener('icecandidate', event => {
 		if (event.candidate) {
@@ -129,4 +129,4 @@ context.start();
 				"message": "Remote track added"
 			});
 	});
-}*/
+}
