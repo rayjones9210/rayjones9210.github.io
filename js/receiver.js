@@ -67,7 +67,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		"senderId": customEvent.senderId,
 		"message": messageCast
 	});
-});
+});/*
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
 	return null;
@@ -83,7 +83,7 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.PAUSE, l
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.STOP, loadRequestData => {
 	return null;
-});
+});*/
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 	seekData => {
