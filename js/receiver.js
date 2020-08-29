@@ -16,11 +16,10 @@ const remoteStream = new MediaStream();
 //
 context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	var messageCast = customEvent.data;
-	if (messageCast.type === "OFFER") {
 		senderId = customEvent.senderId;
+	if (messageCast.type === "OFFER") {
 		//
-		var rtcSessionDescription = new RTCSessionDescription(messageCast.sdp);
-		rtcSessionDescription.type = "offer";
+		var rtcSessionDescription = new RTCSessionDescription({"type": "offer", "sdp":messageCast.sdp});
 		peerConnection.setRemoteDescription(rtcSessionDescription);
 		//
 		peerConnection.createAnswer().then(answer => {
