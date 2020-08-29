@@ -1,14 +1,14 @@
-var audio = document.querySelector("audio")
-var CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
-var context = cast.framework.CastReceiverContext.getInstance();
+var audio = document.querySelector("audio");
+const CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
+const context = cast.framework.CastReceiverContext.getInstance();
 var playerManager = context.getPlayerManager();
-var senderId = undefined;
+var senderId;
 //
 const configuration = {
 	'iceServers': [{
 		'urls': 'stun:stun.l.google.com:19302' 
 	}]
-}
+};
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
@@ -23,7 +23,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		rtcSessionDescription.type = "offer";
 		peerConnection.setRemoteDescription(rtcSessionDescription);
 		//
-		const answer = peerConnection.createAnswer().then(answer => {
+		peerConnection.createAnswer().then(answer => {
 			peerConnection.setLocalDescription(answer);
 			//
 			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
@@ -98,12 +98,8 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 	});
 //
 playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
-//options
-var options = new cast.framework.CastReceiverOptions();
-options.customNamespaces = Object.assign({});
-options.customNamespaces[CUSTOM_CHANNEL] = cast.framework.system.MessageType.JSON;
 //
-context.start(options);
+context.start();
 //
 function configPeerConnection() {
 	// Listen for local ICE candidates on the local RTCPeerConnection
