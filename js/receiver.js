@@ -12,7 +12,7 @@ const configuration = {
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
-audio.srcObject = remoteStream;
+//audio.srcObject = remoteStream;
 //
 context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	var messageCast = customEvent.data;
