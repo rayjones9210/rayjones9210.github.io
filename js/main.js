@@ -3,14 +3,13 @@ var CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
 var context = cast.framework.CastReceiverContext.getInstance();
 var playerManager = context.getPlayerManager();
 var senderId = undefined;
-let peerConnection; //receiving peer
 //
 const configuration = {
 	'iceServers': [{
 		'urls': 'stun:stun.l.google.com:19302' | 'stun4.l.google.com:19302'
 	}]
 }
-peerConnection = new RTCPeerConnection(configuration);
+let peerConnection = new RTCPeerConnection(configuration);//receiving peer
 const remoteStream = new MediaStream();
 //
 audio.srcObject = remoteStream;
@@ -24,12 +23,18 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		rtcSessionDescription.type = "offer";
 		peerConnection.setRemoteDescription(rtcSessionDescription);
 		//
-		const answer = await peerConnection.createAnswer();
-		await peerConnection.setLocalDescription(answer);
-		//
-		context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
-			"type": "ANSWER",
-			"answer": answer
+		const answer = peerConnection.createAnswer().then(answer => {
+			peerConnection.setLocalDescription(answer);
+			//
+			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+				"type": "ANSWER",
+				"answer": answer
+			});
+		}).catch(error => {
+			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+				"type": "ERROR",
+				"message": error
+			});
 		});
 		//
 		configPeerConnection();
@@ -48,7 +53,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		});
 	} else if (messageCast.type === "ICE_CANDIDATE") {
 		try {
-			await peerConnection.addIceCandidate(messageCast.iceCandidate);
+			peerConnection.addIceCandidate(messageCast.iceCandidate);
 		} catch (e) {
 			context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
 				"type": "ERROR",
