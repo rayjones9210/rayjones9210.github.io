@@ -1,108 +1,113 @@
-var audio = document.querySelector("audio");
 const CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
-const context = cast.framework.CastReceiverContext.getInstance();
-var playerManager = context.getPlayerManager();
+var audio;
+var context;
 var senderId;
-//
-const configuration = {};
-let peerConnection = new RTCPeerConnection(configuration);//receiving peer
-const remoteStream = new MediaStream();
-//
-context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
-	var messageCast = customEvent.data;
-		senderId = customEvent.senderId;
-	if (messageCast.type === "OFFER") {
-		//
-		var rtcSessionDescription = new RTCSessionDescription({"type": "offer", "sdp":messageCast.sdp});
-		peerConnection.setRemoteDescription(rtcSessionDescription);
-		//
-		peerConnection.createAnswer().then(answer => {
-			peerConnection.setLocalDescription(answer);
-			//
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "ANSWER",
-				"answer": answer
-			});
-		}).catch(error => {
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "ERROR",
-				"message": "Could not create answer " + error
-			});
-		});
-		//
-		configPeerConnection();
-	} else if (messageCast.type === "START") {
-		try {
-			audio.srcObject = remoteStream;
-			audio.play();
-			//
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "STARTED"
-			});
-		}
-		catch(e)
-		{
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "ERROR",
-				"message": "Could not set audio source object " + e
-			});
-		}
-	} else if (messageCast.type === "STOP") {
-		//
-		audio.pause();
-		remoteStream.getTracks().forEach(track => track.stop());
-		//
-		context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-			"type": "STOPPED"
-		});
-	} else if (messageCast.type === "ICE_CANDIDATE") {
-		try {
-			peerConnection.addIceCandidate(messageCast.iceCandidate);
-		} catch (e) {
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "ERROR",
-				"message": "Error adding received ice candidate" + e
-			});
-		}
-	}
+var playerManager;
+window.onload = function() {
+	audio = document.querySelector("audio");
+	context = cast.framework.CastReceiverContext.getInstance();
+	playerManager = context.getPlayerManager();
 	//
-	/*context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
-		"type": "MESSAGE_RECEIVED",
-		"senderId": customEvent.senderId,
-		"message": messageCast
-	});*/
-});
-//
-playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
-	return null;
-});
-//
-playerManager.setMessageInterceptor(cast.framework.messages.MessageType.PLAY, loadRequestData => {
-	return null;
-});
-//
-playerManager.setMessageInterceptor(cast.framework.messages.MessageType.PAUSE, loadRequestData => {
-	return null;
-});
-//
-playerManager.setMessageInterceptor(cast.framework.messages.MessageType.STOP, loadRequestData => {
-	return null;
-});
-//
-playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
-	seekData => {
-		// Block seeking if the SEEK supported media command is disabled
-		if (!(playerManager.getSupportedMediaCommands() & cast.framework.messages.Command.SEEK)) {
-			let e = new cast.framework.messages.ErrorData(cast.framework.messages.ErrorType.INVALID_REQUEST);
-			e.reason = cast.framework.messages.ErrorReason.NOT_SUPPORTED;
-			return e;
+	const configuration = {};
+	let peerConnection = new RTCPeerConnection(configuration);//receiving peer
+	const remoteStream = new MediaStream();
+	//
+	context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
+		var messageCast = customEvent.data;
+			senderId = customEvent.senderId;
+		if (messageCast.type === "OFFER") {
+			//
+			var rtcSessionDescription = new RTCSessionDescription({"type": "offer", "sdp":messageCast.sdp});
+			peerConnection.setRemoteDescription(rtcSessionDescription);
+			//
+			peerConnection.createAnswer().then(answer => {
+				peerConnection.setLocalDescription(answer);
+				//
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "ANSWER",
+					"answer": answer
+				});
+			}).catch(error => {
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "ERROR",
+					"message": "Could not create answer " + error
+				});
+			});
+			//
+			configPeerConnection();
+		} else if (messageCast.type === "START") {
+			try {
+				audio.srcObject = remoteStream;
+				audio.play();
+				//
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "STARTED"
+				});
+			}
+			catch(e)
+			{
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "ERROR",
+					"message": "Could not set audio source object " + e
+				});
+			}
+		} else if (messageCast.type === "STOP") {
+			//
+			audio.pause();
+			remoteStream.getTracks().forEach(track => track.stop());
+			//
+			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+				"type": "STOPPED"
+			});
+		} else if (messageCast.type === "ICE_CANDIDATE") {
+			try {
+				peerConnection.addIceCandidate(messageCast.iceCandidate);
+			} catch (e) {
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "ERROR",
+					"message": "Error adding received ice candidate" + e
+				});
+			}
 		}
-		return seekData;
+		//
+		/*context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
+			"type": "MESSAGE_RECEIVED",
+			"senderId": customEvent.senderId,
+			"message": messageCast
+		});*/
 	});
-//
-playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
-//
-context.start();
+	//
+	playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
+		return null;
+	});
+	//
+	playerManager.setMessageInterceptor(cast.framework.messages.MessageType.PLAY, loadRequestData => {
+		return null;
+	});
+	//
+	playerManager.setMessageInterceptor(cast.framework.messages.MessageType.PAUSE, loadRequestData => {
+		return null;
+	});
+	//
+	playerManager.setMessageInterceptor(cast.framework.messages.MessageType.STOP, loadRequestData => {
+		return null;
+	});
+	//
+	playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
+		seekData => {
+			// Block seeking if the SEEK supported media command is disabled
+			if (!(playerManager.getSupportedMediaCommands() & cast.framework.messages.Command.SEEK)) {
+				let e = new cast.framework.messages.ErrorData(cast.framework.messages.ErrorType.INVALID_REQUEST);
+				e.reason = cast.framework.messages.ErrorReason.NOT_SUPPORTED;
+				return e;
+			}
+			return seekData;
+		});
+	//
+	playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
+	//
+	context.start();
+};
 //
 function configPeerConnection() {
 	// Listen for local ICE candidates on the local RTCPeerConnection
