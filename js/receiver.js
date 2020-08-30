@@ -106,7 +106,6 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 //
 playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
 //
-const context = cast.framework.CastReceiverContext.getInstance();
 const options = new cast.framework.CastReceiverOptions();
 options.maxInactivity = 1800; //Max streaming time in seconds
 //
