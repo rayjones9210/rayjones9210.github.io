@@ -38,7 +38,6 @@ window.onload = function() {
 		} else if (messageCast.type === "START") {
 			try {
 				audio.srcObject = remoteStream;
-				audio.play();
 				//
 				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 					"type": "STARTED"
@@ -53,12 +52,21 @@ window.onload = function() {
 			}
 		} else if (messageCast.type === "STOP") {
 			//
-			audio.pause();
-			remoteStream.getTracks().forEach(track => track.stop());
-			//
-			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
-				"type": "STOPPED"
-			});
+			try {
+				audio.pause();
+				remoteStream.getTracks().forEach(track => track.stop());
+				//
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "STOPPED"
+				});
+			}
+			catch(e)
+			{
+				context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
+					"type": "ERROR",
+					"message": "Could not stop audio element from playing " + e
+				});
+			}
 		} else if (messageCast.type === "ICE_CANDIDATE") {
 			try {
 				peerConnection.addIceCandidate(messageCast.iceCandidate);
