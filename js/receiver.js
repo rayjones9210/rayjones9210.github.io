@@ -4,7 +4,7 @@ var context;
 var senderId;
 var playerManager;
 window.onload = function() {
-	audio = document.querySelector("audio");
+	audio = document.querySelector("#audio");
 	context = cast.framework.CastReceiverContext.getInstance();
 	playerManager = context.getPlayerManager();
 	//
