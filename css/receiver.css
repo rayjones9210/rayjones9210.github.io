@@ -1,3 +1,4 @@
+font-size: 6em;
 .background {
 	background: rgb(73,7,31);
 	background: -moz-linear-gradient(90deg, rgba(73,7,31,1) 0%, rgba(232,72,130,1) 50%, rgba(73,7,31,1) 100%);
@@ -12,29 +13,8 @@
 
 .progressBar {
 	background-color: rgb(232,72,130);
-} font-size: 6em;
-
-/*.splash {
-	background-image: url(../images/splash.png);
-}*/
-
-/*.watermark {
-	background-image: url(../images/watermark.png);
-	background-size: 57px 57px;
-}*/
+}
 body {
   background: white;
   color: black;
 }
-
-#container {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#content {
-  font-family: 'Roboto', sans-serif;
- 

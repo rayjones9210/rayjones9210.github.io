@@ -1,11 +1,8 @@
 const CUSTOM_CHANNEL = 'urn:x-cast:com.seed.intercom';
-var audio;
-var context;
+var audio = document.querySelector("#audio");
+var context = cast.framework.CastReceiverContext.getInstance();
 var senderId;
-var playerManager;
-audio = document.querySelector("#audio");
-context = cast.framework.CastReceiverContext.getInstance();
-playerManager = context.getPlayerManager();
+var playerManager = context.getPlayerManager();
 //
 const configuration = {};
 let peerConnection = new RTCPeerConnection(configuration);//receiving peer
@@ -78,11 +75,6 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		}
 	}
 	//
-	/*context.sendCustomMessage(CUSTOM_CHANNEL, customEvent.senderId, {
-		"type": "MESSAGE_RECEIVED",
-		"senderId": customEvent.senderId,
-		"message": messageCast
-	});*/
 });
 //
 playerManager.setMessageInterceptor(cast.framework.messages.MessageType.LOAD, loadRequestData => {
@@ -114,7 +106,11 @@ playerManager.setMessageInterceptor(cast.framework.messages.MessageType.SEEK,
 //
 playerManager.setSupportedMediaCommands(cast.framework.messages.Command.PAUSE | cast.framework.messages.Command.STREAM_VOLUME | cast.framework.messages.Command.STREAM_MUTE | cast.framework.messages.Command.STREAM_TRANSFER);
 //
-context.start();
+const context = cast.framework.CastReceiverContext.getInstance();
+const options = new cast.framework.CastReceiverOptions();
+options.maxInactivity = 1800; //Max streaming time in seconds
+//
+context.start(options);
 //
 function configPeerConnection() {
 	// Listen for local ICE candidates on the local RTCPeerConnection
