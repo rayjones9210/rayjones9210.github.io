@@ -34,6 +34,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 	} else if (messageCast.type === "START") {
 		try {
 			audio.srcObject = remoteStream;
+			audio.play();
 			//
 			context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
 				"type": "STARTED"
