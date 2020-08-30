@@ -49,6 +49,7 @@ context.addCustomMessageListener(CUSTOM_CHANNEL, function (customEvent) {
 		}
 	} else if (messageCast.type === "STOP") {
 		//
+		audio.pause();
 		remoteStream.getTracks().forEach(track => track.stop());
 		//
 		context.sendCustomMessage(CUSTOM_CHANNEL, senderId, {
